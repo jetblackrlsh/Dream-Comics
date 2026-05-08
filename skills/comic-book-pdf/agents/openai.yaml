@@ -1,0 +1,4 @@
+interface:
+  display_name: "Comic Book PDF"
+  short_description: "Create full-page anime comic PDFs"
+  default_prompt: "Use $comic-book-pdf to turn my story idea into a complete 4:5 full-page comic PDF with a cover and story pages."
