@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dream Comics</title>
+    <meta name="description" content="Dream Comics is a bright anime comic series adapted from actual dream journal entries and lucid dream adventures in the Storyverse.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Dream Comics">
+    <meta property="og:description" content="Browse, read, download, and support Dream Comics.">
+    <meta property="og:image" content="assets/generated/dream-comics-logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <div class="bg-layer" aria-hidden="true"></div>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Dream Comics home">
+          <img src="assets/generated/dream-comics-logo.png" alt="Dream Comics">
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a class="nav-link" data-route-link="library" href="./">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H7a3 3 0 0 0-3 3V5.5Z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M8 7h8"/></svg>
+            Library
+          </a>
+          <a class="nav-link" data-route-link="about" href="./about/">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg>
+            About
+          </a>
+        </nav>
+        <a class="support-link" href="https://donate.stripe.com/7sY5kDean9QC9uzdwBbV601" target="_blank" rel="noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.4-9A5.4 5.4 0 0 1 12 6.1 5.4 5.4 0 0 1 21.4 12C19.5 16.4 12 21 12 21Z"/></svg>
+          Support Dream Comics
+        </a>
+      </header>
+
+      <main>
+        <section id="library-view" class="reader-layout" aria-label="Dream Comics reader">
+          <aside class="library-panel">
+            <div class="panel-heading">
+              <h1>Library</h1>
+              <p>Browse by date, oldest to newest.</p>
+            </div>
+            <div class="jump-row" aria-label="Comic date shortcuts">
+              <button class="jump-button" id="earliest-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 7-5 5 5 5"/><path d="m18 7-5 5 5 5"/></svg>
+                Earliest
+              </button>
+              <button class="jump-button alt" id="latest-button" type="button">
+                Latest
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 7 5 5-5 5"/><path d="m13 7 5 5-5 5"/></svg>
+              </button>
+            </div>
+            <div id="comic-list" class="comic-list" aria-live="polite"></div>
+            <div class="library-foot">
+              <span id="comic-count">0 comics</span>
+              <span id="oldest-date">Oldest</span>
+              <span id="newest-date">Newest</span>
+            </div>
+          </aside>
+
+          <article class="reader-panel" aria-live="polite">
+            <div class="reader-toolbar">
+              <div>
+                <p class="reader-date" id="reader-date"></p>
+                <h2 id="reader-title">Loading Dream Comics</h2>
+                <a class="share-url" id="share-url" href="./">dreamcomics</a>
+              </div>
+              <div class="reader-actions">
+                <a class="action-button" id="download-button" href="#" download>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>
+                  Download PDF
+                </a>
+                <a class="action-button donate" href="https://donate.stripe.com/7sY5kDean9QC9uzdwBbV601" target="_blank" rel="noreferrer">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.4-9A5.4 5.4 0 0 1 12 6.1 5.4 5.4 0 0 1 21.4 12C19.5 16.4 12 21 12 21Z"/></svg>
+                  Support Dream Comics
+                </a>
+              </div>
+            </div>
+            <div class="reader-nav" aria-label="Reader shortcuts">
+              <button id="first-page-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 7-5 5 5 5"/><path d="m18 7-5 5 5 5"/></svg>
+                First Page
+              </button>
+              <span id="page-count-label">0 pages</span>
+              <button id="last-page-button" type="button">
+                Last Page
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 7 5 5-5 5"/><path d="m13 7 5 5-5 5"/></svg>
+              </button>
+            </div>
+            <div id="page-stack" class="page-stack"></div>
+          </article>
+        </section>
+
+        <section id="about-view" class="about-view" aria-label="About Dream Comics" hidden>
+          <div class="about-copy">
+            <h1>Dream Comics</h1>
+            <p>Dream Comics is a comic series based on my actual dream journal entries, especially my ongoing lucid dream adventures in the Storyverse.</p>
+            <p>Many of these dreams begin through sleep paralysis-induced lucidity, allowing me to become aware inside the dream while the world continues unfolding around me. Rather than fully controlling the dream, I explore it as a living reality, following its events, reacting to its characters, and documenting what happens afterward as faithfully as I can.</p>
+            <p>The central setting is the Storyverse, a multiverse where all possible story ideas exist as cosmic bubble universes floating together in a vast cosmic void. My adventures in this continuity began on 06/11/2025, when I discovered a world known as the Elven Village.</p>
+            <p>In these stories, I appear as Jet, a dream adventurer with long dark-brown dreadlocks, a full dark-brown beard, a black hoodie over a Dream Anime graphic tee, black athletic pants, white sneakers, and a black cross-body belt bag. I wield a rainbow sword, a colorful futuristic crystal blade, and an energy tether made of golden glittering light.</p>
+            <p>Jet does not travel alone. His crew includes Leon, Johnson, Second Brain, Skelebot, Overdrive, Savannah, Tecton, and Chipper. Together, they explore the Storyverse aboard Leon, moving between worlds, facing supernatural dangers, uncovering hidden lore, and protecting the fragile boundary between dreams, stories, and reality.</p>
+            <p>Every Dream Comic is adapted from an actual dream journal entry. The result is a growing dream-based saga where lucid dreaming, superhero adventure, cosmic fantasy, and personal mythology all collide.</p>
+            <div class="about-actions">
+              <a class="action-button" href="./">Browse Comics</a>
+              <a class="action-button donate" href="https://donate.stripe.com/7sY5kDean9QC9uzdwBbV601" target="_blank" rel="noreferrer">Support Dream Comics</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
+
