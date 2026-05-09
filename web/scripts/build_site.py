@@ -95,6 +95,11 @@ def copy_app_shell(source_web: Path, out: Path) -> None:
             continue
         shutil.copy2(image, generated_out / image.name)
 
+    characters_out = out / "assets" / "characters"
+    characters_out.mkdir(parents=True)
+    for image in (source_web / "assets" / "characters").glob("*.png"):
+        shutil.copy2(image, characters_out / image.name)
+
 
 def copy_comics(comics: list[Comic], out: Path) -> list[dict[str, object]]:
     manifest: list[dict[str, object]] = []
@@ -147,6 +152,15 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str) -> No
         "image": f"{site_url}/assets/generated/dream-comics-logo.png",
     }), encoding="utf-8")
 
+    whos_dir = out / "whos-who"
+    whos_dir.mkdir()
+    (whos_dir / "index.html").write_text(with_meta(index_html, {
+        "title": "Who's Who | Dream Comics",
+        "description": "Meet Jet, Leon, Johnson, Second Brain, Skelebot, Overdrive, Savannah, Tecton, Chipper, and Lucid Light.",
+        "url": f"{site_url}/whos-who/",
+        "image": f"{site_url}/assets/characters/jet.png",
+    }), encoding="utf-8")
+
     comics_dir = out / "comics"
     comics_dir.mkdir()
     for comic in comics:
@@ -176,7 +190,7 @@ def with_meta(html: str, meta: dict[str, str]) -> str:
     extra = f'    <meta property="og:url" content="{escape(meta["url"])}">\n    <meta name="twitter:card" content="summary_large_image">\n'
     html = html.replace("    <link rel=\"stylesheet\" href=\"styles.css\">", extra + "    <link rel=\"stylesheet\" href=\"/Dream-Comics/styles.css\">")
     html = html.replace("    <script defer src=\"app.js\"></script>", "    <script defer src=\"/Dream-Comics/app.js\"></script>")
-    html = html.replace("src=\"assets/generated/dream-comics-logo.png\"", "src=\"/Dream-Comics/assets/generated/dream-comics-logo.png\"")
+    html = html.replace("src=\"assets/", "src=\"/Dream-Comics/assets/")
     return html
 
 

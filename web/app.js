@@ -9,6 +9,7 @@ const state = {
 const elements = {
   libraryView: document.querySelector("#library-view"),
   aboutView: document.querySelector("#about-view"),
+  whosView: document.querySelector("#whos-view"),
   comicList: document.querySelector("#comic-list"),
   comicCount: document.querySelector("#comic-count"),
   oldestDate: document.querySelector("#oldest-date"),
@@ -56,6 +57,9 @@ function setAssetUrls() {
   document.querySelectorAll("[href='./about/']").forEach((node) => {
     node.href = `${state.siteRoot}about/`;
   });
+  document.querySelectorAll("[href='./whos-who/']").forEach((node) => {
+    node.href = `${state.siteRoot}whos-who/`;
+  });
 }
 
 function wireEvents() {
@@ -73,14 +77,22 @@ function wireEvents() {
 function renderRoute() {
   const route = getRoute();
   const isAbout = route.kind === "about";
+  const isWhosWho = route.kind === "whos-who";
   elements.aboutView.hidden = !isAbout;
-  elements.libraryView.hidden = isAbout;
+  elements.whosView.hidden = !isWhosWho;
+  elements.libraryView.hidden = isAbout || isWhosWho;
   elements.routeLinks.forEach((link) => {
-    link.classList.toggle("active", link.dataset.routeLink === (isAbout ? "about" : "library"));
+    const activeRoute = isAbout ? "about" : isWhosWho ? "whos-who" : "library";
+    link.classList.toggle("active", link.dataset.routeLink === activeRoute);
   });
 
   if (isAbout) {
     document.title = "About Dream Comics";
+    return;
+  }
+
+  if (isWhosWho) {
+    document.title = "Who's Who | Dream Comics";
     return;
   }
 
@@ -167,6 +179,10 @@ function getRoute() {
     return { kind: "about" };
   }
 
+  if (path.endsWith("/whos-who/") || path.endsWith("/whos-who")) {
+    return { kind: "whos-who" };
+  }
+
   const match = path.match(/\/comics\/([^/]+)\/?$/);
   return { kind: "library", slug: match ? decodeURIComponent(match[1]) : "" };
 }
@@ -207,4 +223,3 @@ function escapeHtml(value) {
     return entities[char];
   });
 }
-
