@@ -17,6 +17,7 @@ const elements = {
   readerDate: document.querySelector("#reader-date"),
   readerTitle: document.querySelector("#reader-title"),
   shareUrl: document.querySelector("#share-url"),
+  shareButton: document.querySelector("#share-button"),
   downloadButton: document.querySelector("#download-button"),
   pageCountLabel: document.querySelector("#page-count-label"),
   pageStack: document.querySelector("#page-stack"),
@@ -67,6 +68,7 @@ function wireEvents() {
   elements.latestButton.addEventListener("click", () => selectComic(state.comics.at(-1)?.slug));
   elements.firstPageButton.addEventListener("click", () => scrollToPage(0));
   elements.lastPageButton.addEventListener("click", () => scrollToPage(state.current?.pages.length - 1));
+  elements.shareButton.addEventListener("click", () => copyComicLink(state.current, elements.shareButton));
   window.addEventListener("popstate", renderRoute);
 
   document.querySelectorAll(`a[href="${SUPPORT_URL}"]`).forEach((link) => {
@@ -104,19 +106,27 @@ function renderLibrary() {
   elements.comicList.replaceChildren();
 
   state.comics.forEach((comic) => {
-    const card = document.createElement("button");
+    const card = document.createElement("article");
     card.className = "comic-card";
-    card.type = "button";
     card.dataset.slug = comic.slug;
     card.innerHTML = `
-      <img src="${state.siteRoot}${comic.cover}" alt="${escapeHtml(comic.title)} cover" loading="lazy">
-      <span>
-        <span class="comic-date">${formatDate(comic.date)}</span>
-        <span class="comic-title">${escapeHtml(comic.title)}</span>
-        <span class="comic-pages">${comic.pages.length} pages</span>
-      </span>
+      <button class="comic-card-main" type="button">
+        <img src="${state.siteRoot}${comic.cover}" alt="${escapeHtml(comic.title)} cover" loading="lazy">
+        <span>
+          <span class="comic-date">${formatDate(comic.date)}</span>
+          <span class="comic-title">${escapeHtml(comic.title)}</span>
+          <span class="comic-pages">${comic.pages.length} pages</span>
+        </span>
+      </button>
+      <button class="comic-share-button" type="button" aria-label="Copy share link for ${escapeHtml(comic.title)}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2"/><path d="m8.6 13.4 6.8 4.2"/></svg>
+        <span>Copy Link</span>
+      </button>
     `;
-    card.addEventListener("click", () => selectComic(comic.slug));
+    card.querySelector(".comic-card-main").addEventListener("click", () => selectComic(comic.slug));
+    card.querySelector(".comic-share-button").addEventListener("click", (event) => {
+      copyComicLink(comic, event.currentTarget);
+    });
     elements.comicList.append(card);
   });
 
@@ -136,8 +146,9 @@ function renderReader(slug) {
   document.title = `${comic.title} | Dream Comics`;
   elements.readerDate.textContent = formatDate(comic.date);
   elements.readerTitle.textContent = comic.title;
-  elements.shareUrl.textContent = `${window.location.origin}${state.siteRoot}comics/${comic.slug}/`;
+  elements.shareUrl.textContent = getComicUrl(comic);
   elements.shareUrl.href = `${state.siteRoot}comics/${comic.slug}/`;
+  resetCopyButton(elements.shareButton);
   elements.downloadButton.href = `${state.siteRoot}${comic.pdf}`;
   elements.downloadButton.setAttribute("download", comic.pdfName || `${comic.slug}.pdf`);
   elements.pageCountLabel.textContent = `${comic.pages.length} pages`;
@@ -171,6 +182,63 @@ function scrollToPage(index) {
   if (page) {
     page.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+}
+
+async function copyComicLink(comic, button) {
+  if (!comic || !button) return;
+
+  const url = getComicUrl(comic);
+  try {
+    await copyText(url);
+    setCopyButtonState(button, "Copied");
+  } catch (error) {
+    setCopyButtonState(button, "Copy Failed");
+  }
+}
+
+async function copyText(value) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const field = document.createElement("textarea");
+  field.value = value;
+  field.setAttribute("readonly", "");
+  field.style.position = "fixed";
+  field.style.top = "-9999px";
+  document.body.append(field);
+  field.select();
+
+  const copied = document.execCommand("copy");
+  field.remove();
+  if (!copied) {
+    throw new Error("Copy command failed");
+  }
+}
+
+function setCopyButtonState(button, label) {
+  const text = button.querySelector("span");
+  if (text) {
+    text.textContent = label;
+  } else {
+    button.append(label);
+  }
+  button.classList.toggle("copied", label === "Copied");
+  window.setTimeout(() => resetCopyButton(button), 1800);
+}
+
+function resetCopyButton(button) {
+  if (!button) return;
+  const text = button.querySelector("span");
+  if (text) {
+    text.textContent = "Copy Link";
+  }
+  button.classList.remove("copied");
+}
+
+function getComicUrl(comic) {
+  return new URL(`${state.siteRoot}comics/${comic.slug}/`, window.location.origin).href;
 }
 
 function getRoute() {
