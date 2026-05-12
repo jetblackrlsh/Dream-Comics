@@ -1,4 +1,6 @@
 const SUPPORT_URL = "https://donate.stripe.com/7sY5kDean9QC9uzdwBbV601";
+const SITE_NAME = "Dream Comics";
+const DEFAULT_DESCRIPTION = "Dream Comics adapts actual dream journal entries and lucid dream adventures in the Storyverse into browser-readable comics and downloadable PDFs.";
 
 const state = {
   comics: [],
@@ -89,12 +91,22 @@ function renderRoute() {
   });
 
   if (isAbout) {
-    document.title = "About Dream Comics";
+    updatePageMeta({
+      title: "About Dream Comics",
+      description: "Learn how Dream Comics adapts actual dream journal entries, lucid dreams, and Storyverse adventures into a growing comic series.",
+      url: `${state.siteRoot}about/`,
+      image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
+    });
     return;
   }
 
   if (isWhosWho) {
-    document.title = "Who's Who | Dream Comics";
+    updatePageMeta({
+      title: "Who's Who | Dream Comics",
+      description: "Meet Jet, Leon, Johnson, Second Brain, Skelebot, Overdrive, Savannah, Tecton, Chipper, and Lucid Light from Dream Comics.",
+      url: `${state.siteRoot}whos-who/`,
+      image: `${state.siteRoot}assets/characters/jet.png`,
+    });
     return;
   }
 
@@ -143,7 +155,13 @@ function renderReader(slug) {
   }
 
   state.current = comic;
-  document.title = `${comic.title} | Dream Comics`;
+  updatePageMeta({
+    title: `${comic.title} | Dream Comics`,
+    description: comic.description || `Read ${comic.title}, a Dream Comics lucid dream comic dated ${comic.date}.`,
+    url: `${state.siteRoot}comics/${comic.slug}/`,
+    image: `${state.siteRoot}${comic.cover}`,
+    type: "article",
+  });
   elements.readerDate.textContent = formatDate(comic.date);
   elements.readerTitle.textContent = comic.title;
   elements.shareUrl.textContent = getComicUrl(comic);
@@ -239,6 +257,49 @@ function resetCopyButton(button) {
 
 function getComicUrl(comic) {
   return new URL(`${state.siteRoot}comics/${comic.slug}/`, window.location.origin).href;
+}
+
+function updatePageMeta({ title, description, url, image, type = "website" }) {
+  const absoluteUrlValue = absoluteUrl(url || state.siteRoot);
+  const absoluteImageValue = absoluteUrl(image || `${state.siteRoot}assets/generated/dream-comics-logo.png`);
+  document.title = title;
+  setMeta("name", "description", description || DEFAULT_DESCRIPTION);
+  setMeta("name", "robots", "index, follow");
+  setLink("canonical", absoluteUrlValue);
+  setMeta("property", "og:type", type);
+  setMeta("property", "og:site_name", SITE_NAME);
+  setMeta("property", "og:title", title);
+  setMeta("property", "og:description", description || DEFAULT_DESCRIPTION);
+  setMeta("property", "og:url", absoluteUrlValue);
+  setMeta("property", "og:image", absoluteImageValue);
+  setMeta("name", "twitter:card", "summary_large_image");
+  setMeta("name", "twitter:title", title);
+  setMeta("name", "twitter:description", description || DEFAULT_DESCRIPTION);
+  setMeta("name", "twitter:image", absoluteImageValue);
+}
+
+function setMeta(attribute, key, content) {
+  let node = document.querySelector(`meta[${attribute}="${key}"]`);
+  if (!node) {
+    node = document.createElement("meta");
+    node.setAttribute(attribute, key);
+    document.head.append(node);
+  }
+  node.setAttribute("content", content);
+}
+
+function setLink(rel, href) {
+  let node = document.querySelector(`link[rel="${rel}"]`);
+  if (!node) {
+    node = document.createElement("link");
+    node.setAttribute("rel", rel);
+    document.head.append(node);
+  }
+  node.setAttribute("href", href);
+}
+
+function absoluteUrl(value) {
+  return new URL(value, window.location.origin).href;
 }
 
 function getRoute() {
