@@ -1,0 +1,74 @@
+{
+  "page_count": 8,
+  "target_size": [
+    1600,
+    2000
+  ],
+  "fit": "blur-fill",
+  "source_pages": [
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-01-cover.png",
+      "width": 1122,
+      "height": 1402,
+      "aspect_ratio": 0.80029,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.00029
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-02.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-03.png",
+      "width": 1122,
+      "height": 1402,
+      "aspect_ratio": 0.80029,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.00029
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-04.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-05.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-06.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-07.png",
+      "width": 1002,
+      "height": 1569,
+      "aspect_ratio": 0.63862,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16138
+    },
+    {
+      "file": "2026-05-12-lucid-king-conduit/assets/comic-pages/page-08.png",
+      "width": 1002,
+      "height": 1570,
+      "aspect_ratio": 0.63822,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16178
+    }
+  ]
+}
