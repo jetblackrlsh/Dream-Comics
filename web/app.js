@@ -11,6 +11,7 @@ const state = {
 const elements = {
   libraryView: document.querySelector("#library-view"),
   aboutView: document.querySelector("#about-view"),
+  followView: document.querySelector("#follow-view"),
   whosView: document.querySelector("#whos-view"),
   comicList: document.querySelector("#comic-list"),
   comicCount: document.querySelector("#comic-count"),
@@ -60,6 +61,9 @@ function setAssetUrls() {
   document.querySelectorAll("[href='./about/']").forEach((node) => {
     node.href = `${state.siteRoot}about/`;
   });
+  document.querySelectorAll("[href='./follow/']").forEach((node) => {
+    node.href = `${state.siteRoot}follow/`;
+  });
   document.querySelectorAll("[href='./whos-who/']").forEach((node) => {
     node.href = `${state.siteRoot}whos-who/`;
   });
@@ -81,12 +85,14 @@ function wireEvents() {
 function renderRoute() {
   const route = getRoute();
   const isAbout = route.kind === "about";
+  const isFollow = route.kind === "follow";
   const isWhosWho = route.kind === "whos-who";
   elements.aboutView.hidden = !isAbout;
+  elements.followView.hidden = !isFollow;
   elements.whosView.hidden = !isWhosWho;
-  elements.libraryView.hidden = isAbout || isWhosWho;
+  elements.libraryView.hidden = isAbout || isFollow || isWhosWho;
   elements.routeLinks.forEach((link) => {
-    const activeRoute = isAbout ? "about" : isWhosWho ? "whos-who" : "library";
+    const activeRoute = isAbout ? "about" : isFollow ? "follow" : isWhosWho ? "whos-who" : "library";
     link.classList.toggle("active", link.dataset.routeLink === activeRoute);
   });
 
@@ -95,6 +101,16 @@ function renderRoute() {
       title: "About Dream Comics",
       description: "Learn how Dream Comics adapts actual dream journal entries, lucid dreams, and Storyverse adventures into a growing comic series.",
       url: `${state.siteRoot}about/`,
+      image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
+    });
+    return;
+  }
+
+  if (isFollow) {
+    updatePageMeta({
+      title: "Follow Dream Comics",
+      description: "Follow Dream Comics by email and get new lucid dream comic releases when the site updates.",
+      url: `${state.siteRoot}follow/`,
       image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
     });
     return;
@@ -306,6 +322,10 @@ function getRoute() {
   const path = window.location.pathname;
   if (path.endsWith("/about/") || path.endsWith("/about")) {
     return { kind: "about" };
+  }
+
+  if (path.endsWith("/follow/") || path.endsWith("/follow")) {
+    return { kind: "follow" };
   }
 
   if (path.endsWith("/whos-who/") || path.endsWith("/whos-who")) {

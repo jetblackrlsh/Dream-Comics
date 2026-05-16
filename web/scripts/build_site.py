@@ -173,6 +173,24 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
         "isPartOf": site_reference(site_url),
     }, simple_fallback("About Dream Comics", about_description, canonical_url(site_url, "/"), "Browse comics"), base_path, site_url), encoding="utf-8")
 
+    follow_dir = out / "follow"
+    follow_dir.mkdir()
+    follow_description = "Follow Dream Comics by email and get new lucid dream comic releases when the site updates."
+    (follow_dir / "index.html").write_text(with_meta(index_html, {
+        "title": "Follow Dream Comics",
+        "description": follow_description,
+        "url": canonical_url(site_url, "follow/"),
+        "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
+        "type": "website",
+    }, {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Follow Dream Comics",
+        "description": follow_description,
+        "url": canonical_url(site_url, "follow/"),
+        "isPartOf": site_reference(site_url),
+    }, simple_fallback("Follow Dream Comics", follow_description, canonical_url(site_url, "rss.xml"), "RSS feed"), base_path, site_url), encoding="utf-8")
+
     whos_dir = out / "whos-who"
     whos_dir.mkdir()
     whos_description = "Meet Jet, Leon, Johnson, Second Brain, Skelebot, Overdrive, Savannah, Tecton, Chipper, and Lucid Light from Dream Comics."
@@ -214,6 +232,7 @@ def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback
     html = html.replace("    <script defer src=\"app.js\"></script>", f"    <script defer src=\"{base_path}app.js\"></script>")
     html = html.replace("href=\"./whos-who/\"", f"href=\"{base_path}whos-who/\"")
     html = html.replace("href=\"./about/\"", f"href=\"{base_path}about/\"")
+    html = html.replace("href=\"./follow/\"", f"href=\"{base_path}follow/\"")
     html = html.replace("href=\"./\"", f"href=\"{base_path}\"")
     html = html.replace("href=\"assets/", f"href=\"{base_path}assets/")
     html = html.replace("src=\"assets/", f"src=\"{base_path}assets/")
@@ -240,6 +259,12 @@ def write_support_files(out: Path, comics: list[dict[str, object]], site_url: st
             "lastmod": str(comics[-1]["date"]),
             "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
             "image_title": "Dream Comics",
+        },
+        {
+            "loc": canonical_url(site_url, "follow/"),
+            "lastmod": str(comics[-1]["date"]),
+            "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
+            "image_title": "Follow Dream Comics",
         },
         {
             "loc": canonical_url(site_url, "whos-who/"),
