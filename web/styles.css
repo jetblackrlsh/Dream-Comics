@@ -167,6 +167,13 @@ svg {
   white-space: nowrap;
 }
 
+.action-button.review {
+  border-color: rgba(25, 216, 255, 0.94);
+  background: linear-gradient(105deg, rgba(13, 40, 98, 0.92), rgba(30, 98, 208, 0.9) 58%, rgba(25, 216, 255, 0.82));
+  box-shadow: inset 0 0 18px rgba(17, 216, 255, 0.22), 0 0 18px rgba(22, 215, 255, 0.28);
+  color: #f8fbff;
+}
+
 .reader-layout {
   display: grid;
   grid-template-columns: minmax(280px, 430px) minmax(0, 1fr);
