@@ -17,7 +17,7 @@ Caption boxes:
 - "I returned alone."
 - "The Needlemen city was waiting."
 
-Visual beats: Top panel shows Jet's bedroom dissolving into dark sleep-paralysis shadows and faint purple Storyverse light. Middle panel shows Jet dropping through the cosmic Storyverse void past bubble universes. Bottom panel shows Jet landing alone in the shattered futuristic city where broken Needlemen fragments cover the street and smoke rises from towers.
+Visual beats: Top panel shows Jet lying stiff in bed as dark sleep-paralysis shadows and faint purple Storyverse light open a portal beside him. Middle panel shows Jet flying side-profile through the cosmic Storyverse void past bubble universes, with exactly two legs trailing behind him and exactly two white sneakers visible. Bottom panel shows Jet landing alone in the shattered futuristic city where broken Needlemen fragments cover the street and smoke rises from towers.
 
 ## Page 3
 
