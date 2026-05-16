@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+from datetime import date, datetime, time, timezone
+from email.utils import format_datetime
 import json
 import re
 import shutil
@@ -151,7 +153,7 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
         "url": canonical_url(site_url, "/"),
         "image": canonical_url(site_url, str(latest["cover"])),
         "type": "website",
-    }, home_structured_data(comics, site_url), home_fallback(comics, site_url, base_path), base_path), encoding="utf-8")
+    }, home_structured_data(comics, site_url), home_fallback(comics, site_url, base_path), base_path, site_url), encoding="utf-8")
 
     about_dir = out / "about"
     about_dir.mkdir()
@@ -169,7 +171,7 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
         "description": about_description,
         "url": canonical_url(site_url, "about/"),
         "isPartOf": site_reference(site_url),
-    }, simple_fallback("About Dream Comics", about_description, canonical_url(site_url, "/"), "Browse comics"), base_path), encoding="utf-8")
+    }, simple_fallback("About Dream Comics", about_description, canonical_url(site_url, "/"), "Browse comics"), base_path, site_url), encoding="utf-8")
 
     whos_dir = out / "whos-who"
     whos_dir.mkdir()
@@ -180,7 +182,7 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
         "url": canonical_url(site_url, "whos-who/"),
         "image": canonical_url(site_url, "assets/characters/jet.png"),
         "type": "website",
-    }, whos_structured_data(site_url), simple_fallback("Dream Comics Who's Who", whos_description, canonical_url(site_url, "/"), "Browse comics"), base_path), encoding="utf-8")
+    }, whos_structured_data(site_url), simple_fallback("Dream Comics Who's Who", whos_description, canonical_url(site_url, "/"), "Browse comics"), base_path, site_url), encoding="utf-8")
 
     comics_dir = out / "comics"
     comics_dir.mkdir()
@@ -196,10 +198,11 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
             "image": canonical_url(site_url, str(comic["cover"])),
             "type": "article",
             "published": str(comic["date"]),
-        }, comic_structured_data(comic, site_url), comic_fallback(comic, site_url, base_path), base_path), encoding="utf-8")
+        }, comic_structured_data(comic, site_url), comic_fallback(comic, site_url, base_path), base_path, site_url), encoding="utf-8")
 
 
-def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback_html: str, base_path: str) -> str:
+def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback_html: str, base_path: str, site_url: str) -> str:
+    meta = {**meta, "feed": canonical_url(site_url, "rss.xml")}
     html = re.sub(
         r"    <!-- SEO_META_START -->.*?    <!-- SEO_META_END -->",
         seo_meta_block(meta, structured_data),
@@ -254,6 +257,7 @@ def write_support_files(out: Path, comics: list[dict[str, object]], site_url: st
         })
 
     (out / "sitemap.xml").write_text(sitemap_xml(sitemap_urls), encoding="utf-8")
+    (out / "rss.xml").write_text(rss_xml(comics, site_url), encoding="utf-8")
     (out / "robots.txt").write_text(
         "User-agent: *\n"
         "Allow: /\n\n"
@@ -280,6 +284,7 @@ def seo_meta_block(meta: dict[str, str], structured_data: object) -> str:
         f"    <meta property=\"og:description\" content=\"{description}\">",
         f"    <meta property=\"og:url\" content=\"{url}\">",
         f"    <meta property=\"og:image\" content=\"{image}\">",
+        f"    <link rel=\"alternate\" type=\"application/rss+xml\" title=\"Dream Comics RSS Feed\" href=\"{escape(meta['feed'])}\">",
         "    <meta name=\"twitter:card\" content=\"summary_large_image\">",
         f"    <meta name=\"twitter:title\" content=\"{title}\">",
         f"    <meta name=\"twitter:description\" content=\"{description}\">",
@@ -381,7 +386,7 @@ def home_fallback(comics: list[dict[str, object]], site_url: str, base_path: str
         "    <section class=\"noscript-seo\" aria-label=\"Dream Comics index\">\n"
         "      <h1>Dream Comics</h1>\n"
         "      <p>Read Dream Comics, a Storyverse lucid dream comic series adapted from actual dream journal entries.</p>\n"
-        f"      <p><a href=\"{escape(canonical_url(site_url, 'sitemap.xml'))}\">Sitemap</a></p>\n"
+        f"      <p><a href=\"{escape(canonical_url(site_url, 'rss.xml'))}\">RSS feed</a> | <a href=\"{escape(canonical_url(site_url, 'sitemap.xml'))}\">Sitemap</a></p>\n"
         f"      <ul>\n{items}\n      </ul>\n"
         "    </section>"
     )
@@ -428,6 +433,45 @@ def sitemap_xml(urls: list[dict[str, str]]) -> str:
         ])
     lines.append("</urlset>")
     return "\n".join(lines) + "\n"
+
+
+def rss_xml(comics: list[dict[str, object]], site_url: str) -> str:
+    feed_url = canonical_url(site_url, "rss.xml")
+    latest_date = str(comics[-1]["date"])
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+        "  <channel>",
+        "    <title>Dream Comics</title>",
+        f"    <link>{escape(canonical_url(site_url, '/'))}</link>",
+        "    <description>New Dream Comics releases adapted from actual dream journal entries.</description>",
+        "    <language>en-us</language>",
+        f"    <lastBuildDate>{escape(rss_pub_date(latest_date))}</lastBuildDate>",
+        f"    <atom:link href=\"{escape(feed_url)}\" rel=\"self\" type=\"application/rss+xml\" />",
+    ]
+    for comic in reversed(comics):
+        comic_url = canonical_url(site_url, f"comics/{comic['slug']}/")
+        lines.extend([
+            "    <item>",
+            f"      <title>{escape(comic['title'])}</title>",
+            f"      <link>{escape(comic_url)}</link>",
+            f"      <guid isPermaLink=\"true\">{escape(comic_url)}</guid>",
+            f"      <pubDate>{escape(rss_pub_date(str(comic['date'])))}</pubDate>",
+            f"      <description>{escape(comic['description'])}</description>",
+            f"      <category>Dream Comics</category>",
+            "    </item>",
+        ])
+    lines.extend([
+        "  </channel>",
+        "</rss>",
+    ])
+    return "\n".join(lines) + "\n"
+
+
+def rss_pub_date(value: str) -> str:
+    published_date = date.fromisoformat(value)
+    published = datetime.combine(published_date, time(12, 0), tzinfo=timezone.utc)
+    return format_datetime(published, usegmt=True)
 
 
 def comic_description(directory: Path, title: str, date: str) -> str:
