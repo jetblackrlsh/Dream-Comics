@@ -1,5 +1,6 @@
 const SUPPORT_URL = "https://donate.stripe.com/7sY5kDean9QC9uzdwBbV601";
 const SITE_NAME = "Dream Comics";
+const FOLLOW_FORM_HASH = "#follow-form";
 const DEFAULT_DESCRIPTION = "Dream Comics adapts actual dream journal entries and lucid dream adventures in the Storyverse into browser-readable comics and downloadable PDFs.";
 
 const state = {
@@ -61,8 +62,9 @@ function setAssetUrls() {
   document.querySelectorAll("[href='./about/']").forEach((node) => {
     node.href = `${state.siteRoot}about/`;
   });
-  document.querySelectorAll("[href='./follow/']").forEach((node) => {
-    node.href = `${state.siteRoot}follow/`;
+  document.querySelectorAll("[href='./follow/'], [href='./follow/#follow-form']").forEach((node) => {
+    const hash = node.getAttribute("href").includes(FOLLOW_FORM_HASH) ? FOLLOW_FORM_HASH : "";
+    node.href = `${state.siteRoot}follow/${hash}`;
   });
   document.querySelectorAll("[href='./whos-who/']").forEach((node) => {
     node.href = `${state.siteRoot}whos-who/`;
@@ -75,6 +77,13 @@ function wireEvents() {
   elements.firstPageButton.addEventListener("click", () => scrollToPage(0));
   elements.lastPageButton.addEventListener("click", () => scrollToPage(state.current?.pages.length - 1));
   elements.shareButton.addEventListener("click", () => copyComicLink(state.current, elements.shareButton));
+  document.querySelectorAll("[data-follow-link]").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (!shouldHandleInternalClick(event)) return;
+      event.preventDefault();
+      navigateToFollowForm();
+    });
+  });
   window.addEventListener("popstate", renderRoute);
 
   document.querySelectorAll(`a[href="${SUPPORT_URL}"]`).forEach((link) => {
@@ -113,6 +122,9 @@ function renderRoute() {
       url: `${state.siteRoot}follow/`,
       image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
     });
+    if (window.location.hash === FOLLOW_FORM_HASH) {
+      scrollToFollowForm();
+    }
     return;
   }
 
@@ -208,6 +220,22 @@ function selectComic(slug) {
   history.pushState({}, "", `${state.siteRoot}comics/${slug}/`);
   renderRoute();
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function navigateToFollowForm() {
+  history.pushState({}, "", `${state.siteRoot}follow/${FOLLOW_FORM_HASH}`);
+  renderRoute();
+  scrollToFollowForm();
+}
+
+function scrollToFollowForm() {
+  window.requestAnimationFrame(() => {
+    document.querySelector(FOLLOW_FORM_HASH)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function shouldHandleInternalClick(event) {
+  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
 function scrollToPage(index) {

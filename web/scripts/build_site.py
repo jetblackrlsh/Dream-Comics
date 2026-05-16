@@ -232,6 +232,7 @@ def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback
     html = html.replace("    <script defer src=\"app.js\"></script>", f"    <script defer src=\"{base_path}app.js\"></script>")
     html = html.replace("href=\"./whos-who/\"", f"href=\"{base_path}whos-who/\"")
     html = html.replace("href=\"./about/\"", f"href=\"{base_path}about/\"")
+    html = html.replace("href=\"./follow/#follow-form\"", f"href=\"{base_path}follow/#follow-form\"")
     html = html.replace("href=\"./follow/\"", f"href=\"{base_path}follow/\"")
     html = html.replace("href=\"./\"", f"href=\"{base_path}\"")
     html = html.replace("href=\"assets/", f"href=\"{base_path}assets/")
