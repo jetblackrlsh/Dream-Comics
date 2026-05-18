@@ -114,7 +114,8 @@ button {
 .comic-share-button,
 .follow-library-button,
 .jump-button,
-.reader-nav button {
+.reader-nav button,
+.search-clear-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -251,6 +252,63 @@ svg {
   box-shadow: inset 0 0 18px rgba(255, 66, 231, 0.18), 0 0 16px rgba(255, 72, 232, 0.24);
 }
 
+.library-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(126px, 0.8fr);
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid rgba(92, 178, 255, 0.34);
+  border-radius: var(--radius);
+  background: rgba(3, 13, 42, 0.66);
+}
+
+.search-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.search-field span {
+  color: #aef6ff;
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.search-field input {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  padding: 0 10px;
+  border: 1px solid rgba(128, 231, 255, 0.62);
+  border-radius: 6px;
+  outline: none;
+  color: var(--ink);
+  background: rgba(2, 8, 31, 0.9);
+  box-shadow: inset 0 0 16px rgba(25, 216, 255, 0.12);
+  font: 700 0.95rem/1 Arial, sans-serif;
+}
+
+.search-field input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 2px rgba(25, 216, 255, 0.18), inset 0 0 16px rgba(25, 216, 255, 0.12);
+}
+
+.search-field input::placeholder {
+  color: #88a7e9;
+  opacity: 1;
+}
+
+.search-clear-button {
+  grid-column: 1 / -1;
+  min-height: 38px;
+  padding: 0 12px;
+  color: #f6f8ff;
+  font-size: 0.82rem;
+}
+
 .comic-list {
   display: grid;
   gap: 14px;
@@ -271,6 +329,16 @@ svg {
 .comic-card.active {
   border-color: var(--cyan);
   box-shadow: 0 0 22px rgba(20, 219, 255, 0.36), inset 0 0 24px rgba(31, 143, 255, 0.18);
+}
+
+.no-search-results {
+  margin: 0;
+  padding: 18px 12px;
+  border: 1px dashed rgba(128, 231, 255, 0.44);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font: 700 0.95rem/1.4 Arial, sans-serif;
+  text-align: center;
 }
 
 .comic-card-main {
@@ -405,6 +473,32 @@ svg {
   padding: 0 18px;
 }
 
+.fullscreen-action {
+  border-color: rgba(134, 255, 184, 0.86);
+  color: #e6fff0;
+  background: linear-gradient(180deg, rgba(12, 87, 55, 0.9), rgba(4, 42, 31, 0.88));
+  box-shadow: inset 0 0 18px rgba(134, 255, 184, 0.16), 0 0 16px rgba(134, 255, 184, 0.2);
+}
+
+.fullscreen-action[aria-pressed="true"] {
+  border-color: rgba(255, 214, 73, 0.94);
+  color: #fff8d7;
+  background: linear-gradient(180deg, rgba(121, 77, 11, 0.94), rgba(63, 39, 5, 0.9));
+  box-shadow: inset 0 0 18px rgba(255, 214, 73, 0.18), 0 0 18px rgba(255, 214, 73, 0.24);
+}
+
+.fullscreen-action .fullscreen-exit-icon {
+  display: none;
+}
+
+.fullscreen-action[aria-pressed="true"] .fullscreen-enter-icon {
+  display: none;
+}
+
+.fullscreen-action[aria-pressed="true"] .fullscreen-exit-icon {
+  display: block;
+}
+
 .reader-nav {
   display: flex;
   align-items: center;
@@ -435,6 +529,95 @@ svg {
   border-radius: 2px;
   background: #020617;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.46), 0 0 18px rgba(31, 220, 255, 0.2);
+}
+
+body.reader-fullscreen {
+  overflow: hidden;
+}
+
+body.reader-fullscreen .topbar,
+body.reader-fullscreen .library-panel {
+  display: none;
+}
+
+body.reader-fullscreen .shell {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+}
+
+body.reader-fullscreen .reader-layout {
+  display: block;
+}
+
+body.reader-fullscreen .reader-panel,
+.reader-panel:fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+  padding: clamp(8px, 1.5vw, 18px);
+  border: 0;
+  border-radius: 0;
+  overflow: auto;
+  background:
+    linear-gradient(180deg, rgba(2, 6, 20, 0.98), rgba(4, 12, 37, 0.98)),
+    var(--bg);
+  box-shadow: none;
+}
+
+body.reader-fullscreen .reader-toolbar,
+.reader-panel:fullscreen .reader-toolbar {
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 10px;
+  padding: 12px;
+  background: rgba(3, 9, 30, 0.94);
+}
+
+body.reader-fullscreen .reader-toolbar h2,
+.reader-panel:fullscreen .reader-toolbar h2 {
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+}
+
+body.reader-fullscreen .share-url,
+.reader-panel:fullscreen .share-url {
+  margin-top: 8px;
+}
+
+body.reader-fullscreen .reader-actions,
+.reader-panel:fullscreen .reader-actions {
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  min-width: min(460px, 100%);
+}
+
+body.reader-fullscreen .reader-actions .review,
+body.reader-fullscreen .reader-actions .donate,
+.reader-panel:fullscreen .reader-actions .review,
+.reader-panel:fullscreen .reader-actions .donate {
+  display: none;
+}
+
+body.reader-fullscreen .reader-nav,
+.reader-panel:fullscreen .reader-nav {
+  margin: 0 0 10px;
+}
+
+body.reader-fullscreen .page-stack,
+.reader-panel:fullscreen .page-stack {
+  align-content: start;
+  gap: 12px;
+  min-height: 0;
+}
+
+body.reader-fullscreen .comic-page,
+.reader-panel:fullscreen .comic-page {
+  width: min(100%, 1320px);
+  max-width: calc(100vw - clamp(16px, 3vw, 36px));
+  max-height: none;
+  box-shadow: 0 0 22px rgba(31, 220, 255, 0.18);
 }
 
 .about-view,
@@ -745,7 +928,8 @@ svg {
   .action-button,
   .comic-share-button,
   .jump-button,
-  .reader-nav button {
+  .reader-nav button,
+  .search-clear-button {
     min-height: 44px;
     font-size: 0.84rem;
   }
@@ -758,6 +942,10 @@ svg {
   .reader-actions,
   .action-button {
     width: 100%;
+  }
+
+  .library-search {
+    grid-template-columns: 1fr;
   }
 
   .comic-card {
@@ -774,6 +962,22 @@ svg {
     grid-template-columns: 1fr;
     gap: 10px;
     text-align: center;
+  }
+
+  body.reader-fullscreen .reader-toolbar,
+  .reader-panel:fullscreen .reader-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  body.reader-fullscreen .reader-actions,
+  .reader-panel:fullscreen .reader-actions {
+    grid-template-columns: 1fr;
+  }
+
+  body.reader-fullscreen .comic-page,
+  .reader-panel:fullscreen .comic-page {
+    width: 100%;
+    max-height: none;
   }
 
   .library-foot {

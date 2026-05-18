@@ -72,6 +72,20 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 7 5 5-5 5"/><path d="m13 7 5 5-5 5"/></svg>
               </button>
             </div>
+            <form class="library-search" id="library-search" role="search" aria-label="Search comics">
+              <label class="search-field">
+                <span>Title</span>
+                <input id="title-search" type="search" autocomplete="off" placeholder="Search titles">
+              </label>
+              <label class="search-field">
+                <span>Date</span>
+                <input id="date-search" type="date">
+              </label>
+              <button class="search-clear-button" id="clear-search-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                Clear
+              </button>
+            </form>
             <a class="follow-library-button" data-follow-link href="./follow/#follow-form">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg>
               Follow for Updates
@@ -95,6 +109,11 @@
                 <button class="action-button share-action" id="share-button" type="button">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2"/><path d="m8.6 13.4 6.8 4.2"/></svg>
                   <span>Copy Link</span>
+                </button>
+                <button class="action-button fullscreen-action" id="fullscreen-button" type="button" aria-pressed="false">
+                  <svg class="fullscreen-enter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"/><path d="M3 3l7 7"/><path d="M16 3h5v5"/><path d="m14 10 7-7"/><path d="M8 21H3v-5"/><path d="m3 21 7-7"/><path d="M16 21h5v-5"/><path d="m14 14 7 7"/></svg>
+                  <svg class="fullscreen-exit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3v7H3"/><path d="m3 10 7-7"/><path d="M14 3v7h7"/><path d="m21 10-7-7"/><path d="M10 21v-7H3"/><path d="m3 14 7 7"/><path d="M14 21v-7h7"/><path d="m21 14-7 7"/></svg>
+                  <span>Reader Mode</span>
                 </button>
                 <a class="action-button" id="download-button" href="#" download>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>

@@ -5,8 +5,10 @@ const DEFAULT_DESCRIPTION = "Dream Comics adapts actual dream journal entries an
 
 const state = {
   comics: [],
+  filteredComics: [],
   current: null,
   siteRoot: getSiteRoot(),
+  readerMode: false,
 };
 
 const elements = {
@@ -14,14 +16,20 @@ const elements = {
   aboutView: document.querySelector("#about-view"),
   followView: document.querySelector("#follow-view"),
   whosView: document.querySelector("#whos-view"),
+  librarySearch: document.querySelector("#library-search"),
+  titleSearch: document.querySelector("#title-search"),
+  dateSearch: document.querySelector("#date-search"),
+  clearSearchButton: document.querySelector("#clear-search-button"),
   comicList: document.querySelector("#comic-list"),
   comicCount: document.querySelector("#comic-count"),
   oldestDate: document.querySelector("#oldest-date"),
   newestDate: document.querySelector("#newest-date"),
+  readerPanel: document.querySelector(".reader-panel"),
   readerDate: document.querySelector("#reader-date"),
   readerTitle: document.querySelector("#reader-title"),
   shareUrl: document.querySelector("#share-url"),
   shareButton: document.querySelector("#share-button"),
+  fullscreenButton: document.querySelector("#fullscreen-button"),
   downloadButton: document.querySelector("#download-button"),
   pageCountLabel: document.querySelector("#page-count-label"),
   pageStack: document.querySelector("#page-stack"),
@@ -45,6 +53,7 @@ async function init() {
     }
     const payload = await response.json();
     state.comics = payload.comics || [];
+    state.filteredComics = state.comics;
     renderLibrary();
     renderRoute();
   } catch (error) {
@@ -72,11 +81,17 @@ function setAssetUrls() {
 }
 
 function wireEvents() {
-  elements.earliestButton.addEventListener("click", () => selectComic(state.comics[0]?.slug));
-  elements.latestButton.addEventListener("click", () => selectComic(state.comics.at(-1)?.slug));
+  elements.earliestButton.addEventListener("click", () => selectComic(state.filteredComics[0]?.slug));
+  elements.latestButton.addEventListener("click", () => selectComic(state.filteredComics.at(-1)?.slug));
+  elements.librarySearch.addEventListener("submit", (event) => event.preventDefault());
+  elements.titleSearch.addEventListener("input", applySearchFilter);
+  elements.dateSearch.addEventListener("input", applySearchFilter);
+  elements.clearSearchButton.addEventListener("click", clearSearch);
   elements.firstPageButton.addEventListener("click", () => scrollToPage(0));
   elements.lastPageButton.addEventListener("click", () => scrollToPage(state.current?.pages.length - 1));
   elements.shareButton.addEventListener("click", () => copyComicLink(state.current, elements.shareButton));
+  elements.fullscreenButton.addEventListener("click", () => toggleReaderMode());
+  document.addEventListener("fullscreenchange", syncReaderModeFromFullscreen);
   document.querySelectorAll("[data-follow-link]").forEach((link) => {
     link.addEventListener("click", (event) => {
       if (!shouldHandleInternalClick(event)) return;
@@ -104,6 +119,10 @@ function renderRoute() {
     const activeRoute = isAbout ? "about" : isFollow ? "follow" : isWhosWho ? "whos-who" : "library";
     link.classList.toggle("active", link.dataset.routeLink === activeRoute);
   });
+
+  if ((isAbout || isFollow || isWhosWho) && state.readerMode) {
+    setReaderMode(false);
+  }
 
   if (isAbout) {
     updatePageMeta({
@@ -170,9 +189,15 @@ function renderLibrary() {
     elements.comicList.append(card);
   });
 
-  elements.comicCount.textContent = `${state.comics.length} ${state.comics.length === 1 ? "comic" : "comics"}`;
-  elements.oldestDate.textContent = state.comics[0] ? `Oldest: ${formatDate(state.comics[0].date)}` : "Oldest";
-  elements.newestDate.textContent = state.comics.at(-1) ? `Newest: ${formatDate(state.comics.at(-1).date)}` : "Newest";
+  const noResults = document.createElement("p");
+  noResults.id = "no-search-results";
+  noResults.className = "no-search-results";
+  noResults.textContent = "No comics match that search.";
+  noResults.hidden = true;
+  elements.comicList.append(noResults);
+
+  setSearchDateBounds();
+  applySearchFilter();
 }
 
 function renderReader(slug) {
@@ -198,6 +223,7 @@ function renderReader(slug) {
   elements.downloadButton.href = `${state.siteRoot}${comic.pdf}`;
   elements.downloadButton.setAttribute("download", comic.pdfName || `${comic.slug}.pdf`);
   elements.pageCountLabel.textContent = `${comic.pages.length} pages`;
+  resetReaderModeButton();
 
   elements.pageStack.replaceChildren();
   comic.pages.forEach((page, index) => {
@@ -213,6 +239,56 @@ function renderReader(slug) {
   document.querySelectorAll(".comic-card").forEach((card) => {
     card.classList.toggle("active", card.dataset.slug === comic.slug);
   });
+}
+
+function setSearchDateBounds() {
+  if (!state.comics.length) return;
+  elements.dateSearch.min = state.comics[0].date;
+  elements.dateSearch.max = state.comics.at(-1).date;
+}
+
+function applySearchFilter() {
+  const titleQuery = normalizeSearch(elements.titleSearch.value);
+  const dateQuery = elements.dateSearch.value;
+
+  state.filteredComics = state.comics.filter((comic) => {
+    const matchesTitle = !titleQuery || normalizeSearch(comic.title).includes(titleQuery);
+    const matchesDate = !dateQuery || comic.date === dateQuery;
+    return matchesTitle && matchesDate;
+  });
+
+  const resultSlugs = new Set(state.filteredComics.map((comic) => comic.slug));
+  elements.comicList.querySelectorAll(".comic-card").forEach((card) => {
+    card.hidden = !resultSlugs.has(card.dataset.slug);
+  });
+
+  const noResults = document.querySelector("#no-search-results");
+  if (noResults) {
+    noResults.hidden = state.filteredComics.length > 0;
+  }
+
+  updateLibrarySummary();
+}
+
+function clearSearch() {
+  elements.titleSearch.value = "";
+  elements.dateSearch.value = "";
+  applySearchFilter();
+  elements.titleSearch.focus();
+}
+
+function updateLibrarySummary() {
+  const filteredCount = state.filteredComics.length;
+  const totalCount = state.comics.length;
+  const hasSearch = Boolean(elements.titleSearch.value || elements.dateSearch.value);
+  const comicWord = totalCount === 1 ? "comic" : "comics";
+  elements.comicCount.textContent = hasSearch ? `${filteredCount} of ${totalCount} ${comicWord}` : `${totalCount} ${totalCount === 1 ? "comic" : "comics"}`;
+  elements.oldestDate.textContent = state.filteredComics[0] ? `Oldest: ${formatDate(state.filteredComics[0].date)}` : "Oldest";
+  elements.newestDate.textContent = state.filteredComics.at(-1) ? `Newest: ${formatDate(state.filteredComics.at(-1).date)}` : "Newest";
+}
+
+function normalizeSearch(value) {
+  return value.trim().toLocaleLowerCase();
 }
 
 function selectComic(slug) {
@@ -244,6 +320,49 @@ function scrollToPage(index) {
   if (page) {
     page.scrollIntoView({ behavior: "smooth", block: "start" });
   }
+}
+
+async function toggleReaderMode() {
+  await setReaderMode(!state.readerMode);
+}
+
+async function setReaderMode(enabled) {
+  state.readerMode = enabled;
+  document.body.classList.toggle("reader-fullscreen", enabled);
+  resetReaderModeButton();
+
+  if (enabled && elements.readerPanel.requestFullscreen && document.fullscreenElement !== elements.readerPanel) {
+    try {
+      await elements.readerPanel.requestFullscreen();
+    } catch (error) {
+      document.body.classList.add("reader-fullscreen");
+    }
+    return;
+  }
+
+  if (!enabled && document.fullscreenElement) {
+    try {
+      await document.exitFullscreen();
+    } catch (error) {
+      document.body.classList.remove("reader-fullscreen");
+    }
+  }
+}
+
+function syncReaderModeFromFullscreen() {
+  const enabled = document.fullscreenElement === elements.readerPanel;
+  state.readerMode = enabled;
+  document.body.classList.toggle("reader-fullscreen", state.readerMode);
+  resetReaderModeButton();
+}
+
+function resetReaderModeButton() {
+  if (!elements.fullscreenButton) return;
+  const text = elements.fullscreenButton.querySelector("span");
+  if (text) {
+    text.textContent = state.readerMode ? "Exit Reader" : "Reader Mode";
+  }
+  elements.fullscreenButton.setAttribute("aria-pressed", String(state.readerMode));
 }
 
 async function copyComicLink(comic, button) {
