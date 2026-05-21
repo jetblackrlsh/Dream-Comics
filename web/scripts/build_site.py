@@ -415,7 +415,7 @@ def whos_structured_data(site_url: str) -> object:
 def other_comics_structured_data(site_url: str) -> object:
     sites = [
         ("Random Comics", "https://randomcomics.art"),
-        ("Planet-Man Comics", "https://jetblackrlsh.github.io/Planet-Man-Comics/web-app/"),
+        ("Planet-Man Comics", "https://planet-man.randomcomics.art/"),
     ]
     return {
         "@context": "https://schema.org",
@@ -493,7 +493,7 @@ def other_comics_fallback(description: str) -> str:
         f"      <p>{escape(description)}</p>\n"
         "      <ul>\n"
         "        <li><a href=\"https://randomcomics.art\">Random Comics</a></li>\n"
-        "        <li><a href=\"https://jetblackrlsh.github.io/Planet-Man-Comics/web-app/\">Planet-Man Comics</a></li>\n"
+        "        <li><a href=\"https://planet-man.randomcomics.art/\">Planet-Man Comics</a></li>\n"
         "      </ul>\n"
         "    </section>"
     )
