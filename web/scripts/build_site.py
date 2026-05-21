@@ -191,6 +191,17 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
         "isPartOf": site_reference(site_url),
     }, simple_fallback("Follow Dream Comics", follow_description, canonical_url(site_url, "rss.xml"), "RSS feed"), base_path, site_url), encoding="utf-8")
 
+    other_comics_dir = out / "other-comics"
+    other_comics_dir.mkdir()
+    other_comics_description = "Visit Nicholas Benson's other comic sites, including Random Comics and Planet-Man Comics."
+    (other_comics_dir / "index.html").write_text(with_meta(index_html, {
+        "title": "Other Comics | Dream Comics",
+        "description": other_comics_description,
+        "url": canonical_url(site_url, "other-comics/"),
+        "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
+        "type": "website",
+    }, other_comics_structured_data(site_url), other_comics_fallback(other_comics_description), base_path, site_url), encoding="utf-8")
+
     whos_dir = out / "whos-who"
     whos_dir.mkdir()
     whos_description = "Meet Jet, Leon, Johnson, Second Brain, Skelebot, Overdrive, Savannah, Tecton, Chipper, and Lucid Light from Dream Comics."
@@ -234,6 +245,7 @@ def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback
     html = html.replace("href=\"./about/\"", f"href=\"{base_path}about/\"")
     html = html.replace("href=\"./follow/#follow-form\"", f"href=\"{base_path}follow/#follow-form\"")
     html = html.replace("href=\"./follow/\"", f"href=\"{base_path}follow/\"")
+    html = html.replace("href=\"./other-comics/\"", f"href=\"{base_path}other-comics/\"")
     html = html.replace("href=\"./\"", f"href=\"{base_path}\"")
     html = html.replace("href=\"assets/", f"href=\"{base_path}assets/")
     html = html.replace("src=\"assets/", f"src=\"{base_path}assets/")
@@ -266,6 +278,12 @@ def write_support_files(out: Path, comics: list[dict[str, object]], site_url: st
             "lastmod": str(comics[-1]["date"]),
             "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
             "image_title": "Follow Dream Comics",
+        },
+        {
+            "loc": canonical_url(site_url, "other-comics/"),
+            "lastmod": str(comics[-1]["date"]),
+            "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
+            "image_title": "Other Comics",
         },
         {
             "loc": canonical_url(site_url, "whos-who/"),
@@ -394,6 +412,33 @@ def whos_structured_data(site_url: str) -> object:
     }
 
 
+def other_comics_structured_data(site_url: str) -> object:
+    sites = [
+        ("Random Comics", "https://randomcomics.art"),
+        ("Planet-Man Comics", "https://jetblackrlsh.github.io/Planet-Man-Comics/web-app/"),
+    ]
+    return {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Other Comics",
+        "description": "Links to Nicholas Benson's other comic sites.",
+        "url": canonical_url(site_url, "other-comics/"),
+        "isPartOf": site_reference(site_url),
+        "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "name": name,
+                    "url": url,
+                }
+                for index, (name, url) in enumerate(sites)
+            ],
+        },
+    }
+
+
 def site_reference(site_url: str) -> object:
     return {
         "@type": "WebSite",
@@ -437,6 +482,19 @@ def simple_fallback(title: str, description: str, href: str, label: str) -> str:
         f"      <h1>{escape(title)}</h1>\n"
         f"      <p>{escape(description)}</p>\n"
         f"      <p><a href=\"{escape(href)}\">{escape(label)}</a></p>\n"
+        "    </section>"
+    )
+
+
+def other_comics_fallback(description: str) -> str:
+    return (
+        "    <section class=\"noscript-seo\">\n"
+        "      <h1>Other Comics</h1>\n"
+        f"      <p>{escape(description)}</p>\n"
+        "      <ul>\n"
+        "        <li><a href=\"https://randomcomics.art\">Random Comics</a></li>\n"
+        "        <li><a href=\"https://jetblackrlsh.github.io/Planet-Man-Comics/web-app/\">Planet-Man Comics</a></li>\n"
+        "      </ul>\n"
         "    </section>"
     )
 

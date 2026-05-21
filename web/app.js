@@ -15,6 +15,7 @@ const elements = {
   libraryView: document.querySelector("#library-view"),
   aboutView: document.querySelector("#about-view"),
   followView: document.querySelector("#follow-view"),
+  otherComicsView: document.querySelector("#other-comics-view"),
   whosView: document.querySelector("#whos-view"),
   librarySearch: document.querySelector("#library-search"),
   titleSearch: document.querySelector("#title-search"),
@@ -75,6 +76,9 @@ function setAssetUrls() {
     const hash = node.getAttribute("href").includes(FOLLOW_FORM_HASH) ? FOLLOW_FORM_HASH : "";
     node.href = `${state.siteRoot}follow/${hash}`;
   });
+  document.querySelectorAll("[href='./other-comics/']").forEach((node) => {
+    node.href = `${state.siteRoot}other-comics/`;
+  });
   document.querySelectorAll("[href='./whos-who/']").forEach((node) => {
     node.href = `${state.siteRoot}whos-who/`;
   });
@@ -110,17 +114,19 @@ function renderRoute() {
   const route = getRoute();
   const isAbout = route.kind === "about";
   const isFollow = route.kind === "follow";
+  const isOtherComics = route.kind === "other-comics";
   const isWhosWho = route.kind === "whos-who";
   elements.aboutView.hidden = !isAbout;
   elements.followView.hidden = !isFollow;
+  elements.otherComicsView.hidden = !isOtherComics;
   elements.whosView.hidden = !isWhosWho;
-  elements.libraryView.hidden = isAbout || isFollow || isWhosWho;
+  elements.libraryView.hidden = isAbout || isFollow || isOtherComics || isWhosWho;
   elements.routeLinks.forEach((link) => {
-    const activeRoute = isAbout ? "about" : isFollow ? "follow" : isWhosWho ? "whos-who" : "library";
+    const activeRoute = isAbout ? "about" : isFollow ? "follow" : isOtherComics ? "other-comics" : isWhosWho ? "whos-who" : "library";
     link.classList.toggle("active", link.dataset.routeLink === activeRoute);
   });
 
-  if ((isAbout || isFollow || isWhosWho) && state.readerMode) {
+  if ((isAbout || isFollow || isOtherComics || isWhosWho) && state.readerMode) {
     setReaderMode(false);
   }
 
@@ -144,6 +150,16 @@ function renderRoute() {
     if (window.location.hash === FOLLOW_FORM_HASH) {
       scrollToFollowForm();
     }
+    return;
+  }
+
+  if (isOtherComics) {
+    updatePageMeta({
+      title: "Other Comics | Dream Comics",
+      description: "Visit Nicholas Benson's other comic sites, including Random Comics and Planet-Man Comics.",
+      url: `${state.siteRoot}other-comics/`,
+      image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
+    });
     return;
   }
 
@@ -473,6 +489,10 @@ function getRoute() {
 
   if (path.endsWith("/follow/") || path.endsWith("/follow")) {
     return { kind: "follow" };
+  }
+
+  if (path.endsWith("/other-comics/") || path.endsWith("/other-comics")) {
+    return { kind: "other-comics" };
   }
 
   if (path.endsWith("/whos-who/") || path.endsWith("/whos-who")) {
