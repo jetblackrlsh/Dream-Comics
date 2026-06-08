@@ -12,6 +12,7 @@ const state = {
 };
 
 const elements = {
+  topbar: document.querySelector(".topbar"),
   libraryView: document.querySelector("#library-view"),
   aboutView: document.querySelector("#about-view"),
   followView: document.querySelector("#follow-view"),
@@ -311,7 +312,7 @@ function selectComic(slug) {
   if (!slug) return;
   history.pushState({}, "", `${state.siteRoot}comics/${slug}/`);
   renderRoute();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  scrollToReader();
 }
 
 function navigateToFollowForm() {
@@ -324,6 +325,20 @@ function scrollToFollowForm() {
   window.requestAnimationFrame(() => {
     document.querySelector(FOLLOW_FORM_HASH)?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
+}
+
+function scrollToReader() {
+  if (!elements.readerPanel) return;
+  window.requestAnimationFrame(() => {
+    const topbarHeight = elements.topbar?.getBoundingClientRect().height || 0;
+    const stickyOffset = topbarHeight + 24;
+    const readerTop = elements.readerPanel.getBoundingClientRect().top + window.scrollY - stickyOffset;
+    window.scrollTo({ top: Math.max(0, readerTop), behavior: preferredScrollBehavior() });
+  });
+}
+
+function preferredScrollBehavior() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 }
 
 function shouldHandleInternalClick(event) {
