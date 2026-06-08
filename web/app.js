@@ -312,7 +312,7 @@ function selectComic(slug) {
   if (!slug) return;
   history.pushState({}, "", `${state.siteRoot}comics/${slug}/`);
   renderRoute();
-  scrollToReader();
+  scrollToSelectedComic();
 }
 
 function navigateToFollowForm() {
@@ -327,13 +327,35 @@ function scrollToFollowForm() {
   });
 }
 
-function scrollToReader() {
-  if (!elements.readerPanel) return;
+function scrollToSelectedComic() {
   window.requestAnimationFrame(() => {
-    const topbarHeight = elements.topbar?.getBoundingClientRect().height || 0;
-    const stickyOffset = topbarHeight + 24;
-    const readerTop = elements.readerPanel.getBoundingClientRect().top + window.scrollY - stickyOffset;
-    window.scrollTo({ top: Math.max(0, readerTop), behavior: preferredScrollBehavior() });
+    const firstPage = elements.pageStack?.querySelector(".comic-page");
+    const target = firstPage || elements.pageStack || elements.readerPanel;
+    if (!target) return;
+    scrollElementBelowTopbar(target, { immediate: true });
+    window.setTimeout(() => scrollElementBelowTopbar(target, { immediate: true }), 150);
+    if (firstPage && !firstPage.complete) {
+      firstPage.addEventListener("load", () => scrollElementBelowTopbar(firstPage, { immediate: true }), { once: true });
+    }
+  });
+}
+
+function scrollElementBelowTopbar(element, options = {}) {
+  const topbarHeight = elements.topbar?.getBoundingClientRect().height || 0;
+  const stickyOffset = topbarHeight + 16;
+  const targetTop = element.getBoundingClientRect().top + window.scrollY - stickyOffset;
+  const top = Math.max(0, targetTop);
+  if (!options.immediate) {
+    window.scrollTo({ top, behavior: preferredScrollBehavior() });
+    return;
+  }
+
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo(0, top);
+  window.requestAnimationFrame(() => {
+    root.style.scrollBehavior = previousScrollBehavior;
   });
 }
 
