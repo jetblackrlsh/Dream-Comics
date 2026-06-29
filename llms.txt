@@ -1,0 +1,42 @@
+# Dream Comics
+
+Dream Comics is a repository of dated dream-comic packages plus a generated static web reader.
+
+## Key Files
+
+- `AGENTS.md`: repo-specific agent rules. Read this first before creating or revising comic content.
+- `skills/comic-book-pdf/SKILL.md`: required workflow for creating comic-book PDFs and page artwork.
+- `skills/comic-book-pdf/references/page_prompting.md`: page-prompting guidance used by the comic workflow.
+- `web/scripts/build_site.py`: rebuilds the static site data and assets from dated comic folders.
+- `web/index.html`, `web/app.js`, `web/styles.css`: source files for the static web reader.
+- `web/dist/`: generated web output. It is ignored locally and rebuilt by GitHub Pages workflow on push.
+
+## Comic Package Layout
+
+Comic folders are named with the dream date and slug, for example `2026-06-21-aegis-trophy-gallery`.
+Typical contents:
+
+- `README.md`: package summary and metadata.
+- `source/story-idea.txt`: source dream or premise.
+- `source/treatment.md`: story treatment.
+- `source/character-bible.md`: character continuity notes.
+- `source/page-script.md`: page-by-page script and image prompts.
+- `assets/comic-pages/`: generated comic page artwork.
+- `output/pdf/`: assembled comic PDF.
+- `tmp/comic-book-pdf/`: previews, contact sheet, and manifest from PDF assembly.
+
+## Required Agent Rules
+
+- Do not put an issue number on a Dream-Comics cover.
+- Identify Dream-Comics entries by the dated comic folder and visible date/title context.
+- When generating or revising cover prompts, omit issue-number language unless the user explicitly asks for an exception.
+- Use the built-in in-chat AI image generation tool for comic-book page artwork required by `skills/comic-book-pdf/SKILL.md`.
+- Do not use Pillow, canvas drawing, SVG, HTML/CSS, or other local drawing/compositing code as a substitute for generated page artwork.
+- Pillow may be used only for workflow-supported assembly, preview, inspection, or format normalization after page artwork has already been generated.
+- After creating or revising a dated comic package, run `python web/scripts/build_site.py` and verify the comic appears in `web/dist/data/comics.json`.
+
+## Notes for Future Work
+
+- Keep edits scoped to the dated comic package or web source files relevant to the task.
+- Preserve existing generated comic assets unless the user asks to regenerate or revise them.
+- Treat `web/dist` as generated output unless the task specifically requires inspecting a built site.
