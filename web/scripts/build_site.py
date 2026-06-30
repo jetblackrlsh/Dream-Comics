@@ -173,6 +173,24 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
         "isPartOf": site_reference(site_url),
     }, simple_fallback("About Dream Comics", about_description, canonical_url(site_url, "/"), "Browse comics"), base_path, site_url), encoding="utf-8")
 
+    ai_limitations_dir = out / "ai-limitations"
+    ai_limitations_dir.mkdir()
+    ai_limitations_description = "Learn how Dream Comics uses AI as part of its comic and story creation process, including the visual mistakes, inconsistencies, and story clarity limits that remain visible in the work."
+    (ai_limitations_dir / "index.html").write_text(with_meta(index_html, {
+        "title": "AI Limitations | Dream Comics",
+        "description": ai_limitations_description,
+        "url": canonical_url(site_url, "ai-limitations/"),
+        "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
+        "type": "website",
+    }, {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "AI Limitations",
+        "description": ai_limitations_description,
+        "url": canonical_url(site_url, "ai-limitations/"),
+        "isPartOf": site_reference(site_url),
+    }, simple_fallback("AI Limitations", ai_limitations_description, canonical_url(site_url, "/"), "Browse comics"), base_path, site_url), encoding="utf-8")
+
     follow_dir = out / "follow"
     follow_dir.mkdir()
     follow_description = "Follow Dream Comics by email and get new lucid dream comic releases when the site updates."
@@ -243,6 +261,7 @@ def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback
     html = html.replace("    <script defer src=\"app.js\"></script>", f"    <script defer src=\"{base_path}app.js\"></script>")
     html = html.replace("href=\"./whos-who/\"", f"href=\"{base_path}whos-who/\"")
     html = html.replace("href=\"./about/\"", f"href=\"{base_path}about/\"")
+    html = html.replace("href=\"./ai-limitations/\"", f"href=\"{base_path}ai-limitations/\"")
     html = html.replace("href=\"./follow/#follow-form\"", f"href=\"{base_path}follow/#follow-form\"")
     html = html.replace("href=\"./follow/\"", f"href=\"{base_path}follow/\"")
     html = html.replace("href=\"./other-comics/\"", f"href=\"{base_path}other-comics/\"")
@@ -272,6 +291,12 @@ def write_support_files(out: Path, comics: list[dict[str, object]], site_url: st
             "lastmod": str(comics[-1]["date"]),
             "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
             "image_title": "Dream Comics",
+        },
+        {
+            "loc": canonical_url(site_url, "ai-limitations/"),
+            "lastmod": str(comics[-1]["date"]),
+            "image": canonical_url(site_url, "assets/generated/dream-comics-logo.png"),
+            "image_title": "AI Limitations",
         },
         {
             "loc": canonical_url(site_url, "follow/"),

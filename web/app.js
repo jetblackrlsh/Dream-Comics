@@ -15,6 +15,7 @@ const elements = {
   topbar: document.querySelector(".topbar"),
   libraryView: document.querySelector("#library-view"),
   aboutView: document.querySelector("#about-view"),
+  aiLimitationsView: document.querySelector("#ai-limitations-view"),
   followView: document.querySelector("#follow-view"),
   otherComicsView: document.querySelector("#other-comics-view"),
   whosView: document.querySelector("#whos-view"),
@@ -73,6 +74,9 @@ function setAssetUrls() {
   document.querySelectorAll("[href='./about/']").forEach((node) => {
     node.href = `${state.siteRoot}about/`;
   });
+  document.querySelectorAll("[href='./ai-limitations/']").forEach((node) => {
+    node.href = `${state.siteRoot}ai-limitations/`;
+  });
   document.querySelectorAll("[href='./follow/'], [href='./follow/#follow-form']").forEach((node) => {
     const hash = node.getAttribute("href").includes(FOLLOW_FORM_HASH) ? FOLLOW_FORM_HASH : "";
     node.href = `${state.siteRoot}follow/${hash}`;
@@ -114,20 +118,22 @@ function wireEvents() {
 function renderRoute() {
   const route = getRoute();
   const isAbout = route.kind === "about";
+  const isAiLimitations = route.kind === "ai-limitations";
   const isFollow = route.kind === "follow";
   const isOtherComics = route.kind === "other-comics";
   const isWhosWho = route.kind === "whos-who";
   elements.aboutView.hidden = !isAbout;
+  elements.aiLimitationsView.hidden = !isAiLimitations;
   elements.followView.hidden = !isFollow;
   elements.otherComicsView.hidden = !isOtherComics;
   elements.whosView.hidden = !isWhosWho;
-  elements.libraryView.hidden = isAbout || isFollow || isOtherComics || isWhosWho;
+  elements.libraryView.hidden = isAbout || isAiLimitations || isFollow || isOtherComics || isWhosWho;
   elements.routeLinks.forEach((link) => {
-    const activeRoute = isAbout ? "about" : isFollow ? "follow" : isOtherComics ? "other-comics" : isWhosWho ? "whos-who" : "library";
+    const activeRoute = isAbout ? "about" : isAiLimitations ? "ai-limitations" : isFollow ? "follow" : isOtherComics ? "other-comics" : isWhosWho ? "whos-who" : "library";
     link.classList.toggle("active", link.dataset.routeLink === activeRoute);
   });
 
-  if ((isAbout || isFollow || isOtherComics || isWhosWho) && state.readerMode) {
+  if ((isAbout || isAiLimitations || isFollow || isOtherComics || isWhosWho) && state.readerMode) {
     setReaderMode(false);
   }
 
@@ -136,6 +142,16 @@ function renderRoute() {
       title: "About Dream Comics",
       description: "Learn how Dream Comics adapts actual dream journal entries, lucid dreams, and Storyverse adventures into a growing comic series.",
       url: `${state.siteRoot}about/`,
+      image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
+    });
+    return;
+  }
+
+  if (isAiLimitations) {
+    updatePageMeta({
+      title: "AI Limitations | Dream Comics",
+      description: "Learn how Dream Comics uses AI as part of its comic and story creation process, including the visual mistakes, inconsistencies, and story clarity limits that remain visible in the work.",
+      url: `${state.siteRoot}ai-limitations/`,
       image: `${state.siteRoot}assets/generated/dream-comics-logo.png`,
     });
     return;
@@ -522,6 +538,10 @@ function getRoute() {
   const path = window.location.pathname;
   if (path.endsWith("/about/") || path.endsWith("/about")) {
     return { kind: "about" };
+  }
+
+  if (path.endsWith("/ai-limitations/") || path.endsWith("/ai-limitations")) {
+    return { kind: "ai-limitations" };
   }
 
   if (path.endsWith("/follow/") || path.endsWith("/follow")) {

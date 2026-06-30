@@ -622,6 +622,7 @@ body.reader-fullscreen .comic-page,
 }
 
 .about-view,
+.ai-limitations-view,
 .follow-view,
 .other-comics-view,
 .whos-view {
@@ -644,6 +645,15 @@ body.reader-fullscreen .comic-page,
 .about-copy p {
   color: #e4ecff;
   font: 1.08rem/1.7 Arial, sans-serif;
+}
+
+.ai-limitations-copy {
+  border-color: rgba(255, 214, 73, 0.72);
+  box-shadow: var(--shadow-cyan), 0 0 26px rgba(255, 194, 46, 0.22), inset 0 0 58px rgba(255, 194, 46, 0.1);
+}
+
+.ai-limitations-copy h1 {
+  text-shadow: 0 0 18px rgba(255, 194, 46, 0.48), 0 0 24px rgba(25, 216, 255, 0.34);
 }
 
 .follow-copy {
