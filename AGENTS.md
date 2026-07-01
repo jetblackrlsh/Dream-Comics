@@ -6,6 +6,13 @@
 - Dream-Comics entries are identified by their date, using the dated comic folder and visible date/title context rather than issue numbering.
 - When generating or revising cover prompts, omit issue-number language unless the user explicitly asks for an exception.
 
+## Story Crafting
+
+- Make the story incredibly clear and easy to understand.
+- Do not make the reader infer what the story is about or what is happening in the story.
+- The story should feel very obvious to the reader, not ambiguous or overly complicated.
+- Prefer long captions because they communicate more information to the reader, making the story clearer and easier to understand.
+
 ## Workflow Authority
 
 - Follow the workflow files and skills in this repo when they define comic generation requirements.
