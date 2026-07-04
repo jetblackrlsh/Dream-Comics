@@ -12,6 +12,8 @@
 - Do not make the reader infer what the story is about or what is happening in the story.
 - The story should feel very obvious to the reader, not ambiguous or overly complicated.
 - Prefer long captions because they communicate more information to the reader, making the story clearer and easier to understand.
+- Do not include redundant captions that literally repeat the same wording as another caption on the same page.
+- Do not number caption boxes in the generated comic page art or in page-generation prompts.
 
 ## Workflow Authority
 
