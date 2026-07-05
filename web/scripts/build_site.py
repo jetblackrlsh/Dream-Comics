@@ -13,6 +13,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 
+try:
+    from PIL import Image
+except ImportError:  # pragma: no cover - exercised by the deploy workflow environment.
+    Image = None  # type: ignore[assignment]
+
 
 DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-.+")
 README_HEADING_RE = re.compile(r"^#\s+(\d{2})/(\d{2})/(\d{4})\s*(?:-|:)\s+(.+?)\s*$", re.MULTILINE)
@@ -122,8 +127,8 @@ def copy_comics(comics: list[Comic], out: Path) -> list[dict[str, object]]:
 
         page_paths: list[str] = []
         for page in comic.pages:
-            target = pages_out / page.name
-            shutil.copy2(page, target)
+            target = pages_out / f"{page.stem}.jpg"
+            write_web_page_image(page, target)
             page_paths.append(target.relative_to(out).as_posix())
 
         pdf_target = comic_out / comic.pdf.name
@@ -141,6 +146,16 @@ def copy_comics(comics: list[Comic], out: Path) -> list[dict[str, object]]:
         })
 
     return manifest
+
+
+def write_web_page_image(source: Path, target: Path) -> None:
+    if Image is None:
+        raise SystemExit("Pillow is required to build optimized web comic pages. Install it with: python3 -m pip install pillow")
+
+    with Image.open(source) as image:
+        image = image.convert("RGB")
+        image.thumbnail((1200, 1500), Image.Resampling.LANCZOS)
+        image.save(target, format="JPEG", quality=86, optimize=True, progressive=True)
 
 
 def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_path: str) -> None:
