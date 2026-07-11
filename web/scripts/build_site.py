@@ -22,6 +22,7 @@ except ImportError:  # pragma: no cover - exercised by the deploy workflow envir
 DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-.+")
 README_HEADING_RE = re.compile(r"^#\s+(\d{2})/(\d{2})/(\d{4})\s*(?:-|:)\s+(.+?)\s*$", re.MULTILINE)
 LOG_LINE_RE = re.compile(r"^##\s+Logline\s+(.+?)(?=^##\s+|\Z)", re.MULTILINE | re.DOTALL)
+MAX_PAGES_ARTIFACT_BYTES = 900_000_000
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,7 @@ def main() -> None:
     write_json(out / "data" / "comics.json", {"comics": manifest})
     write_pages(out, manifest, site_url, base_path)
     write_support_files(out, manifest, site_url)
+    validate_artifact_size(out)
 
     print(f"Built {len(manifest)} comics into {out}")
 
@@ -265,9 +267,11 @@ def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_
 
 def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback_html: str, base_path: str, site_url: str) -> str:
     meta = {**meta, "feed": canonical_url(site_url, "rss.xml")}
+    # A callable replacement keeps JSON-LD backslashes literal instead of
+    # letting re.sub interpret sequences such as \u2014 or \1.
     html = re.sub(
         r"    <!-- SEO_META_START -->.*?    <!-- SEO_META_END -->",
-        seo_meta_block(meta, structured_data),
+        lambda _match: seo_meta_block(meta, structured_data),
         html,
         count=1,
         flags=re.DOTALL,
@@ -291,6 +295,18 @@ def with_meta(html: str, meta: dict[str, str], structured_data: object, fallback
 def write_json(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def validate_artifact_size(out: Path, max_bytes: int = MAX_PAGES_ARTIFACT_BYTES) -> int:
+    total_bytes = sum(path.stat().st_size for path in out.rglob("*") if path.is_file())
+    if total_bytes > max_bytes:
+        total_mb = total_bytes / 1_000_000
+        max_mb = max_bytes / 1_000_000
+        raise SystemExit(
+            f"Pages artifact is {total_mb:.1f} MB, exceeding the {max_mb:.0f} MB safety limit. "
+            "Reduce or compress site assets before deploying."
+        )
+    return total_bytes
 
 
 def write_support_files(out: Path, comics: list[dict[str, object]], site_url: str) -> None:

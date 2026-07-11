@@ -21,10 +21,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Install build dependencies
         run: python3 -m pip install pillow
+      - name: Test static site builder
+        run: python3 -m unittest discover -s web/tests -v
       - name: Build static site
         run: python3 web/scripts/build_site.py
       - name: Upload artifact
