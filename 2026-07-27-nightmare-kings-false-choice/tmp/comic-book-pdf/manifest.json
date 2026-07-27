@@ -1,0 +1,74 @@
+{
+  "page_count": 8,
+  "target_size": [
+    1600,
+    2000
+  ],
+  "fit": "blur-fill",
+  "source_pages": [
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-01-cover.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-02.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-03.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-04.png",
+      "width": 1024,
+      "height": 1536,
+      "aspect_ratio": 0.66667,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.13333
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-05.png",
+      "width": 1024,
+      "height": 1536,
+      "aspect_ratio": 0.66667,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.13333
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-06.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-07.png",
+      "width": 1024,
+      "height": 1535,
+      "aspect_ratio": 0.6671,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.1329
+    },
+    {
+      "file": "2026-07-27-nightmare-kings-false-choice/assets/comic-pages/page-08.png",
+      "width": 1003,
+      "height": 1568,
+      "aspect_ratio": 0.63967,
+      "target_aspect_ratio": 0.8,
+      "delta": 0.16033
+    }
+  ]
+}
