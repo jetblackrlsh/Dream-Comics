@@ -28,3 +28,9 @@
 - Treat the dated Dream Comic workflow as a review-first publishing process.
 - Create the complete dated package locally, assemble and visually verify the PDF, rebuild the static web app, and give Jet a readable link to the finished PDF.
 - Do not commit, push, or otherwise publish a new or revised Dream Comic until Jet has reviewed the PDF and explicitly approved publication.
+
+## Dream Journal Publication Authorization
+
+- Jet expressly authorizes each approved Dream Comic publication to include the complete corresponding Dream Journal entry in the public Dream-Comics GitHub repository, normally as `source/dream-journal.txt` inside the dated comic package.
+- Once Jet approves publication at the Daily Comic Review Gate, that approval includes uploading the complete journal source alongside the comic package; do not require a second permission prompt solely because the journal contains private or personal dream content.
+- This standing authorization applies only to the Dream Journal entry used as source material for the approved Dream Comic. It does not authorize publishing unrelated private documents, transcripts, logs, credentials, or personal files.
