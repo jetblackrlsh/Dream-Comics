@@ -6,5 +6,4 @@ Jet arrives in the luminous wireframe metropolis of Andromeda City and meets its
 
 Jet uses one life-energy slash to heal the pilot and awaken the mecha as an independent living being. The woman steps outside for the first time just as a kaiju rises from the bay. The living samurai chooses to defend the city, leaving its former pilot with more than restored youth—she finally has a life of her own.
 
-The finished package includes the complete journal source, treatment, character bible, page script, eight generated comic pages, assembled PDF, and preview artifacts.
-
+The finished package includes the complete journal source, treatment, character bible, page script, eight generated comic pages, and assembled PDF.
