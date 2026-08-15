@@ -10,10 +10,11 @@ Story role: <what this page must accomplish in the narrative>
 Character bible for continuity: <stable details for every recurring character>
 Page layout: <cover composition or panel grid, panel sizes, reading order>
 Caption boxes: <short narration and rare short speech to generate directly inside rectangular caption boxes in the page art>
+Outer safe area: Keep every caption box, its complete rectangular border, and every letter inside a roughly 6% margin from all four canvas edges. Nothing readable may touch or cross an outer edge.
 Visual beats: <panel-by-panel actions and emotions>
 Setting and props: <recurring locations, objects, symbols>
 Style: colorful high-saturation anime comic art, bright glow, high detail saturation, crisp linework, cinematic lighting, expressive faces, polished manga-comic page design.
-Constraints: 4:5 portrait full page, caption boxes only, no speech bubbles, no thought bubbles, no floating dialogue, no subtitles, no watermark, no logo, no extra unreadable text. All readable story text must be generated directly inside the page art; do not leave blank caption boxes or art-only panels for later typesetting. Keep all recurring characters visually consistent with the character bible.
+Constraints: 4:5 portrait full page, caption boxes only, no speech bubbles, no thought bubbles, no floating dialogue, no subtitles, no watermark, no logo, no extra unreadable text. All readable story text must be generated directly inside the page art; do not leave blank caption boxes or art-only panels for later typesetting. Keep all recurring characters visually consistent with the character bible. Show every required caption in full with comfortable outer-edge clearance; never crop a caption, letter, or caption-box border.
 ```
 
 ## Page Count Guidance
@@ -42,6 +43,8 @@ Speech bubble saying...
 Thought bubble saying...
 Large paragraphs of tiny text...
 ```
+
+Never place a caption flush against the page boundary. Leave enough room to see background outside the complete box border on every side, especially above top captions and below bottom captions.
 
 ## Continuity Checklist
 

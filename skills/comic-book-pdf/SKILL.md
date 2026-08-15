@@ -22,6 +22,7 @@ This skill differs from one-panel storybook comic skills: each generated image m
 - Keep dialogue minimal. Prefer narration that advances the story.
 - Keep the story complete and satisfying within the chosen page count.
 - Use consistent character designs, outfits, props, color accents, and silhouettes across pages.
+- Keep every readable element and its complete caption-box border inside a generous outer safe area; nothing may touch or cross the canvas edge.
 - Default art style: colorful, high color saturation, bright glow, high detail saturation, dynamic anime art style, crisp comic linework.
 
 ## Workflow
@@ -46,6 +47,7 @@ This skill differs from one-panel storybook comic skills: each generated image m
    - Include cover text guidance only if the user wants visible title text; otherwise keep cover text minimal or omitted to avoid generated text artifacts.
    - For each story page, specify panel layout, visual beats, caption-box text, character continuity notes, lighting, and ending hook.
    - Keep caption text short enough to plausibly fit inside generated caption boxes.
+   - Require every caption box, its complete border, and every letter to remain inside a roughly 6% safe margin from all four outer page edges.
    - Treat the caption-box text as part of the image prompt, not as later overlay copy.
 
 5. Generate full-page images.
@@ -54,6 +56,7 @@ This skill differs from one-panel storybook comic skills: each generated image m
    - Prompt for "full comic book page, 4:5 portrait aspect ratio" every time.
    - Repeat "caption boxes only, no speech bubbles, no thought bubbles" every time.
    - Repeat that all caption-box text, title text, and any other readable story text must be generated directly in the page art, with no blank text boxes to fill later.
+   - Repeat the outer-edge safe-area requirement in every page prompt. Do not assume the image model will preserve it from an earlier page.
    - Save generated images into the project, usually `assets/comic-pages/page-01-cover.png`, `page-02.png`, etc.
 
 6. Assemble the PDF.
@@ -62,9 +65,13 @@ This skill differs from one-panel storybook comic skills: each generated image m
    - Save the PDF under `output/pdf/` and previews under `tmp/comic-book-pdf/`.
 
 7. Verify the result.
-   - Inspect the contact sheet and at least the cover, first story page, middle story page, and final page.
-   - Check for correct page count, 4:5 portrait pages, caption boxes instead of bubbles, text not dominating the art, no obvious character redesigns, and a complete narrative.
-   - If a page fails core requirements, regenerate that page before assembling the final PDF.
+   - Inspect the contact sheet, then inspect **every page individually at a readable size**. A contact sheet or sample of pages is not sufficient.
+   - Compare every page with the page script. Count the expected captions and confirm that each caption is present, complete, readable, and semantically faithful; check names, dates, and uncommon words carefully.
+   - Inspect all four outer edges of every page. Confirm that every letter and the complete rectangular border of every caption box is visible with comfortable inset space. Reject missing text, partial captions, clipped borders, and elements that appear to continue beyond the canvas.
+   - Verify the dimensions and aspect ratio of every source image before PDF assembly. Normalization or blur-fill may correct canvas geometry, but it does not repair content that was generated off-canvas.
+   - Check for caption boxes instead of bubbles, text not dominating the art, no obvious character redesigns, and a complete narrative.
+   - Assemble the PDF, render every PDF page back to images, and inspect the rendered contact sheet plus every rendered page with text near an edge. Confirm that assembly introduced no crop, stretch, missing page, or page-order error.
+   - If any page fails any check, regenerate or edit that page, then repeat the entire source-page and rendered-PDF visual review before treating the comic as final.
 
 ## Suggested Layout
 
@@ -109,3 +116,4 @@ The script requires Pillow. It sorts images by filename, accepts 1-8 pages, norm
 - Page turns must have a coherent visual sequence.
 - The final page must resolve the central conflict emotionally and visually.
 - Generated pages should look intentional as comic pages, not single illustrations with loose captions.
+- No caption, title, date, border, or other required readable element may be missing, clipped, or off-canvas.
