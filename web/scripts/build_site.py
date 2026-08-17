@@ -157,7 +157,7 @@ def write_web_page_image(source: Path, target: Path) -> None:
     with Image.open(source) as image:
         image = image.convert("RGB")
         image.thumbnail((1200, 1500), Image.Resampling.LANCZOS)
-        image.save(target, format="JPEG", quality=82, optimize=True, progressive=True)
+        image.save(target, format="JPEG", quality=80, optimize=True, progressive=True)
 
 
 def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_path: str) -> None:
