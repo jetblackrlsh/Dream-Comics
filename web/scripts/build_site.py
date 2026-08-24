@@ -23,6 +23,8 @@ DATE_DIR_RE = re.compile(r"^\d{4}-\d{2}-\d{2}-.+")
 README_HEADING_RE = re.compile(r"^#\s+(\d{2})/(\d{2})/(\d{4})\s*(?:-|:)\s+(.+?)\s*$", re.MULTILINE)
 LOG_LINE_RE = re.compile(r"^##\s+Logline\s+(.+?)(?=^##\s+|\Z)", re.MULTILINE | re.DOTALL)
 MAX_PAGES_ARTIFACT_BYTES = 900_000_000
+WEB_PAGE_MAX_SIZE = (1000, 1250)
+WEB_PAGE_JPEG_QUALITY = 70
 
 
 @dataclass(frozen=True)
@@ -156,8 +158,14 @@ def write_web_page_image(source: Path, target: Path) -> None:
 
     with Image.open(source) as image:
         image = image.convert("RGB")
-        image.thumbnail((1200, 1500), Image.Resampling.LANCZOS)
-        image.save(target, format="JPEG", quality=75, optimize=True, progressive=True)
+        image.thumbnail(WEB_PAGE_MAX_SIZE, Image.Resampling.LANCZOS)
+        image.save(
+            target,
+            format="JPEG",
+            quality=WEB_PAGE_JPEG_QUALITY,
+            optimize=True,
+            progressive=True,
+        )
 
 
 def write_pages(out: Path, comics: list[dict[str, object]], site_url: str, base_path: str) -> None:
