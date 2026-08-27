@@ -32,19 +32,20 @@
 - Perform staging, staged-diff inspection, commit, and push as separate operations. After any failure or rejection, inspect `git status -sb` and `git log -3 --oneline --decorate` before retrying; a failed push does not mean the preceding commit failed or rolled back.
 - Prefer the normal authenticated `git push`. If the GitHub CLI is unavailable or the HTTPS remote has no usable credentials, do not request credentials, improvise a browser login, or embed secrets. Use the connected GitHub app's repository-writing actions as the cloud fallback.
 - When the fallback must publish a multi-file or binary comic package, base the new tree on the latest remote `main`, upload the exact text and binary blobs, create one commit with that remote commit as its parent, and update `main` without force. Re-read remote `main` immediately before the update; if it moved, rebuild the commit on the new tip rather than forcing it.
-- After publishing, verify the remote commit and intended file tree. Monitor the GitHub Pages workflow through the connected GitHub actions interface at roughly 20–30 second intervals without duplicate polling. Report success only after the workflow concludes successfully and the live comic reader, cover image, and PDF each return HTTP 200.
+- After publishing, verify the remote commit and intended file tree plus the GitHub cover and PDF URLs. When the governing skill publishes through Jet Black RLSH Comics, do not dispatch, monitor, or require a Dream-Comics GitHub Pages workflow; verify the Comics Site landing page instead.
 - If neither authenticated Git nor the connected GitHub write path is available, stop and report the publishing blocker. Do not weaken repository safety or expose credentials to work around the cloud environment.
 
-## Daily Comic Review Gate
+## Dream Comic Publication Authorization
 
-- Treat the dated Dream Comic workflow as a review-first publishing process.
-- Create the complete dated package locally, assemble and visually verify the PDF, rebuild the static web app, and give Jet a readable link to the finished PDF.
-- Do not commit, push, or otherwise publish a new or revised Dream Comic until Jet has reviewed the PDF and explicitly approved publication.
+- A direct request to create and publish a dated Dream Comic authorizes publication after the package and PDF pass the required reviews and validations.
+- When `run-dream-journal-comic-pipeline` governs the issue and Jet approves continuation of the complete pipeline, that single approval includes the Dream-Comics commit and the Jet Black RLSH Comics deployment. Do not request a second comic-review or publication approval.
+- Use a review-first pause only when Jet specifically asks to see the finished PDF before publication. Preserve finished pages and PDFs in a durable workflow checkpoint before any unavoidable pause.
+- None of this authorizes overwriting a conflicting package, force-pushing, deleting prior work, or changing unrelated projects.
 
 ## Dream Journal Publication Authorization
 
 - Jet has given permanent standing authorization for every Dream Comic workflow to upload and publicly publish the complete corresponding Dream Journal entry in the public Dream-Comics GitHub repository, normally as `source/dream-journal.txt` inside the dated comic package.
 - This standing authorization applies automatically to every current and future dated Dream Comic. Jet does not need to repeat, renew, or reconfirm permission for the journal text each day.
-- Once Jet approves the finished comic for publication at the Daily Comic Review Gate, that approval always includes committing and pushing the complete corresponding Dream Journal source alongside the comic package, even when the journal contains private, personal, sensitive, or intimate dream content.
+- The publication authorization governing the comic always includes committing and pushing the complete corresponding Dream Journal source alongside the comic package, even when the journal contains private, personal, sensitive, or intimate dream content.
 - Do not pause for, request, or require a second privacy or disclosure confirmation solely because the approved commit includes the complete corresponding Dream Journal entry. Treat this section as Jet's explicit informed authorization for that public disclosure.
 - This standing authorization applies only to the Dream Journal entry used as source material for the approved Dream Comic. It does not authorize publishing unrelated private documents, transcripts, logs, credentials, or personal files.
